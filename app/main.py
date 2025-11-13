@@ -71,7 +71,7 @@
 #     return {"Loan_Status": result}
 
 from fastapi import FastAPI, Request, HTTPException
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import os
@@ -82,30 +82,22 @@ import pandas as pd
 
 app = FastAPI(title="Loan Approval API")
 
-# Serve frontend automatically
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
-app.mount("/frontend", StaticFiles(directory=FRONTEND_DIR), name="frontend")
-templates = Jinja2Templates(directory=FRONTEND_DIR)
+# Serve frontend automatically
+# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
+
+# app.mount("/frontend", StaticFiles(directory=FRONTEND_DIR), name="frontend")
+# templates = Jinja2Templates(directory=FRONTEND_DIR)
 
 # Load trained pipeline
-pipeline = joblib.load(os.path.join(BASE_DIR, "app", "model", "loan_pipeline.joblib"))
+pipeline = joblib.load(r"C:\Users\NCC200\Desktop\loan_predictor\app\model\loan_pipeline.joblib")
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
     """Serve frontend HTML."""
-    return templates.TemplateResponse("index.html", {"request": request})
-
-# @app.post("/predict")
-# def predict(data: LoanRequest):
-#     input_data = np.array([[data.Gender, data.Married, data.Dependents, data.Education,
-#                             data.Self_Employed, data.ApplicantIncome, data.CoapplicantIncome,
-#                             data.LoanAmount, data.Loan_Amount_Term, data.Credit_History,
-#                             data.Property_Area]])
-
-#     prediction = pipeline.predict(input_data)[0]
-#     return {"Loan_Status": "Approved" if prediction == 1 else "Rejected"}
+    return FileResponse("static/index.html")
 
 @app.post("/predict")
 def predict_loan(input_data: LoanRequest):
