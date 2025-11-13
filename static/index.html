@@ -1,0 +1,525 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Approval Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f4f6;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: #fff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 4px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        #result {
+            text-align: center;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Loan Approval Prediction</h2>
+        <form id="loanForm">
+            <label>Gender</label>
+            <select id="Gender">
+                <option>Male</option>
+                <option>Female</option>
+            </select>
+
+            <label>Married</label>
+            <select id="Married">
+                <option>Yes</option>
+                <option>No</option>
+            </select>
+
+            <label>Dependents</label>
+            <input type="text" id="Dependents" value="0">
+
+            <label>Education</label>
+            <select id="Education">
+                <option>Graduate</option>
+                <option>Not Graduate</option>
+            </select>
+
+            <label>Self Employed</label>
+            <select id="Self_Employed">
+                <option>Yes</option>
+                <option>No</option>
+            </select>
+
+            <label>Applicant Income</label>
+            <input type="number" id="ApplicantIncome" required>
+
+            <label>Coapplicant Income</label>
+            <input type="number" id="CoapplicantIncome" required>
+
+            <label>Loan Amount</label>
+            <input type="number" id="LoanAmount" required>
+
+            <label>Loan Amount Term</label>
+            <input type="number" id="Loan_Amount_Term" required>
+
+            <label>Credit History (1 = Good, 0 = Bad)</label>
+            <select id="Credit_History">
+                <option value="1">1</option>
+                <option value="0">0</option>
+            </select>
+
+            <label>Property Area</label>
+            <select id="Property_Area">
+                <option>Urban</option>
+                <option>Semiurban</option>
+                <option>Rural</option>
+            </select>
+
+            <button type="submit">Predict</button>
+        </form>
+        <div id="result" style="text-align: center; margin-top: 15px; font-weight: bold; color: #007bff;"></div>
+        <div id="loading" style="display:none; text-align:center; margin-top:10px; color:#007bff;">
+    Predicting...
+    </div>
+
+    <script>
+        const form = document.getElementById("loanForm");
+        const resultDiv = document.getElementById("result");
+        const loadingDiv = document.getElementById("loading");
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            // Show loading
+            loadingDiv.style.display = "block";
+            resultDiv.innerHTML = "";
+
+            const data = {
+                Gender: document.getElementById("Gender").value,
+                Married: document.getElementById("Married").value,
+                Dependents: document.getElementById("Dependents").value,
+                Education: document.getElementById("Education").value,
+                Self_Employed: document.getElementById("Self_Employed").value,
+                ApplicantIncome: parseFloat(document.getElementById("ApplicantIncome").value),
+                CoapplicantIncome: parseFloat(document.getElementById("CoapplicantIncome").value),
+                LoanAmount: parseFloat(document.getElementById("LoanAmount").value),
+                Loan_Amount_Term: parseFloat(document.getElementById("Loan_Amount_Term").value),
+                Credit_History: parseFloat(document.getElementById("Credit_History").value),
+                Property_Area: document.getElementById("Property_Area").value
+            };
+
+            try {
+                const res = await fetch("http://127.0.0.1:8000/predict", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await res.json();
+
+                // Show result
+                resultDiv.innerHTML = `
+                    <div style="font-size:1.1em;">
+                        <strong>Prediction:</strong> ${result.Loan_Status}<br>
+                        <strong>Confidence:</strong> ${result.Confidence}%
+                    </div>
+                `;
+
+                // Color: Green = Approved, Red = Rejected
+                resultDiv.style.color = result.Loan_Status === "Approved" ? "green" : "red";
+
+            } catch (err) {
+                resultDiv.innerHTML = `<span style="color:red;">Error: ${err.message}</span>`;
+            } finally {
+                loadingDiv.style.display = "none";
+            }
+        });
+    </script> -->
+
+    <!-- <script>
+        document.getElementById("loanForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            loadingDiv.style.display = "block";
+            resultDiv.innerHTML = "";
+
+            const data = {
+                Gender: document.getElementById("Gender").value,
+                Married: document.getElementById("Married").value,
+                Dependents: document.getElementById("Dependents").value,
+                Education: document.getElementById("Education").value,
+                Self_Employed: document.getElementById("Self_Employed").value,
+                ApplicantIncome: parseFloat(document.getElementById("ApplicantIncome").value),
+                CoapplicantIncome: parseFloat(document.getElementById("CoapplicantIncome").value),
+                LoanAmount: parseFloat(document.getElementById("LoanAmount").value),
+                Loan_Amount_Term: parseFloat(document.getElementById("Loan_Amount_Term").value),
+                Credit_History: parseFloat(document.getElementById("Credit_History").value),
+                Property_Area: document.getElementById("Property_Area").value
+            };
+
+            try {
+            const response = await fetch("http://127.0.0.1:8000/predict", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            resultDiv.innerHTML = `
+                <div style="font-size:1.1em;">
+                    <strong>Prediction:</strong> ${result.Loan_Status}<br>
+                    <strong>Confidence:</strong> ${result.Confidence}%
+                </div>
+            `;
+            // Showing prediction + confidence
+            // document.getElementById("result").innerHTML = `
+                //<strong>Prediction:</strong> ${result.Loan_Status}<br>
+                //<strong>Confidence:</strong> ${result.Confidence}%
+            //`;
+
+            // color based on approval
+            // const resultDiv = document.getElementById("result");
+            resultDiv.style.color = result.Loan_Status === "Approved" ? "green" : "red";
+
+        } catch (err) {
+            resultDiv.innerHTML = `<span style="color:red;">Error: ${err.message}</span>`;
+            // document.getElementById("result").innerHTML = 
+                // `<span style="color: red;">Error: ${err.message}</span>`;
+        } finally {
+            loadingDiv.style.display = "none";
+        }
+    });
+    </script> -->
+<!-- </body>
+</html> -->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Approval Prediction</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background:#f3f4f6;
+            color:#333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #fff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+        h2 { text-align: center; margin-bottom: 20px; }
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 4px;
+            border: 1.5px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        input:invalid {
+            border-color: #e74c3c;
+        }
+        .error {
+            color: #e74c3c;
+            font-size: 0.85em;
+            margin-top: 4px;
+            display: none;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        button:hover { background: #0056b3; }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        #result {
+            text-align: center;
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        #loading {
+            text-align: center;
+            margin-top: 10px;
+            color: #007bff;
+            display: none;
+        }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .btn-group button {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Loan Approval Prediction</h2>
+        <form id="loanForm" novalidate>
+            <label>Gender <span class="error" id="err-Gender"></span></label>
+            <select id="Gender" required>
+                <option value="">Select...</option>
+                <option>Male</option>
+                <option>Female</option>
+            </select>
+
+            <label>Married <span class="error" id="err-Married"></span></label>
+            <select id="Married" required>
+                <option value="">Select...</option>
+                <option>Yes</option>
+                <option>No</option>
+            </select>
+
+            <label>Dependents (0, 1, 2, 3+) <span class="error" id="err-Dependents"></span></label>
+            <input type="text" id="Dependents" value="0" pattern="(0|1|2|3\+)" required>
+
+            <label>Education <span class="error" id="err-Education"></span></label>
+            <select id="Education" required>
+                <option value="">Select...</option>
+                <option>Graduate</option>
+                <option>Not Graduate</option>
+            </select>
+
+            <label>Self Employed <span class="error" id="err-Self_Employed"></span></label>
+            <select id="Self_Employed" required>
+                <option value="">Select...</option>
+                <option>Yes</option>
+                <option>No</option>
+            </select>
+
+            <label>Applicant Income (₦) <span class="error" id="err-ApplicantIncome"></span></label>
+            <input type="number" id="ApplicantIncome" min="0" step="1" required>
+
+            <label>Coapplicant Income (₦) <span class="error" id="err-CoapplicantIncome"></span></label>
+            <input type="number" id="CoapplicantIncome" min="0" step="1" value="0" required>
+
+            <label>Loan Amount (₦) <span class="error" id="err-LoanAmount"></span></label>
+            <input type="number" id="LoanAmount" min="1" step="1" required>
+
+            <label>Loan Term (days) <span class="error" id="err-Loan_Amount_Term"></span></label>
+            <input type="number" id="Loan_Amount_Term" min="12" max="480" value="360" required>
+
+            <label>Credit History <span class="error" id="err-Credit_History"></span></label>
+            <select id="Credit_History" required>
+                <option value="">Select...</option>
+                <option value="1">1 (Good)</option>
+                <option value="0">0 (Bad)</option>
+            </select>
+
+            <label>Property Area <span class="error" id="err-Property_Area"></span></label>
+            <select id="Property_Area" required>
+                <option value="">Select...</option>
+                <option>Urban</option>
+                <option>Semiurban</option>
+                <option>Rural</option>
+            </select>
+
+            <div class="btn-group">
+                <button type="submit" id="predictBtn">Predict</button>
+                <button type="button" id="resetBtn">Reset</button>
+            </div>
+        </form>
+
+        <div id="loading">Predicting...</div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById("loanForm");
+        const predictBtn = document.getElementById("predictBtn");
+        const resetBtn = document.getElementById("resetBtn");
+        const resultDiv = document.getElementById("result");
+        const loadingDiv = document.getElementById("loading");
+
+        // Reset function
+        function resetForm() {
+            form.reset();
+            document.getElementById("Dependents").value = "0";
+            document.getElementById("CoapplicantIncome").value = "0";
+            document.getElementById("Loan_Amount_Term").value = "360";
+            resultDiv.innerHTML = "";
+            loadingDiv.style.display = "none";
+            clearErrors();
+        }
+
+        // Clear all error messages
+        function clearErrors() {
+            document.querySelectorAll(".error").forEach(el => {
+                el.style.display = "none";
+                el.textContent = "";
+            });
+        }
+
+        // Show error
+        function showError(id, msg) {
+            const el = document.getElementById(id);
+            el.textContent = msg;
+            el.style.display = "block";
+        }
+
+        // Validate form
+        function validateForm() {
+            clearErrors();
+            let valid = true;
+
+            const fields = [
+                { id: "Gender", msg: "Please select gender" },
+                { id: "Married", msg: "Please select marital status" },
+                { id: "Education", msg: "Please select education" },
+                { id: "Self_Employed", msg: "Please select employment" },
+                { id: "Property_Area", msg: "Please select area" },
+                { id: "Credit_History", msg: "Please select credit history" },
+            ];
+
+            fields.forEach(f => {
+                if (!document.getElementById(f.id).value) {
+                    showError(`err-${f.id}`, f.msg);
+                    valid = false;
+                }
+            });
+
+            // Numeric fields
+            const numFields = ["ApplicantIncome", "LoanAmount"];
+            numFields.forEach(id => {
+                const val = parseFloat(document.getElementById(id).value);
+                if (isNaN(val) || val <= 0) {
+                    showError(`err-${id}`, "Must be greater than 0");
+                    valid = false;
+                }
+            });
+
+            // Dependents: 0,1,2,3+
+            const dep = document.getElementById("Dependents").value;
+            if (!/^(0|1|2|3\+)$/.test(dep)) {
+                showError("err-Dependents", "Enter 0, 1, 2, or 3+");
+                valid = false;
+            }
+
+            return valid;
+        }
+
+        // Submit handler
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            if (!validateForm()) return;
+
+            predictBtn.disabled = true;
+            loadingDiv.style.display = "block";
+            resultDiv.innerHTML = "";
+
+            const data = {
+                Gender: document.getElementById("Gender").value,
+                Married: document.getElementById("Married").value,
+                Dependents: document.getElementById("Dependents").value,
+                Education: document.getElementById("Education").value,
+                Self_Employed: document.getElementById("Self_Employed").value,
+                ApplicantIncome: parseFloat(document.getElementById("ApplicantIncome").value),
+                CoapplicantIncome: parseFloat(document.getElementById("CoapplicantIncome").value || 0),
+                LoanAmount: parseFloat(document.getElementById("LoanAmount").value),
+                Loan_Amount_Term: parseFloat(document.getElementById("Loan_Amount_Term").value),
+                Credit_History: parseFloat(document.getElementById("Credit_History").value),
+                Property_Area: document.getElementById("Property_Area").value
+            };
+
+            try {
+                const res = await fetch("http://127.0.0.1:8000/predict", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await res.json();
+
+                resultDiv.innerHTML = `
+                    <div>
+                        <strong>Prediction:</strong> ${result.Loan_Status}<br>
+                        <strong>Confidence:</strong> ${result.Confidence}%
+                    </div>
+                `;
+                resultDiv.style.color = result.Loan_Status === "Approved" ? "green" : "red";
+
+            } catch (err) {
+                resultDiv.innerHTML = `<span style="color:red;">Error: ${err.message}</span>`;
+            } finally {
+                loadingDiv.style.display = "none";
+                predictBtn.disabled = false;
+            }
+        });
+
+        // Reset button
+        resetBtn.addEventListener("click", resetForm);
+
+        // Initial reset
+        resetForm();
+    </script>
+</body>
+</html>
