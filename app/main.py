@@ -92,7 +92,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 # templates = Jinja2Templates(directory=FRONTEND_DIR)
 
 # Load trained pipeline
-pipeline = joblib.load(r"C:\Users\NCC200\Desktop\loan_predictor\app\model\loan_pipeline.joblib")
+pipeline = joblib.load("loan_predictor\app\model\loan_pipeline.joblib")
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
