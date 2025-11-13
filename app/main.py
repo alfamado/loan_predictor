@@ -92,7 +92,10 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 # templates = Jinja2Templates(directory=FRONTEND_DIR)
 
 # Load trained pipeline
-pipeline = joblib.load("loan_predictor\app\model\loan_pipeline.joblib")
+pipeline = joblib.load("app/model/loan_pipeline.joblib")
+if not pipeline.exists():
+    raise RuntimeError(f"Model not found at {pipeline}")
+pipeline = joblib.load(pipeline)
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
