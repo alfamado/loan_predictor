@@ -1,7 +1,9 @@
 fastapi
 uvicorn[standard]
 pandas
-scikit-learn
+# scikit-learn
 joblib
 pydantic
-imbalanced-learn
+# imbalanced-learn
+# lightgbm
+catboost

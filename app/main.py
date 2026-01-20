@@ -7,13 +7,14 @@ import os
 from app.schemas import LoanRequest
 import joblib
 import pandas as pd
+import numpy as np
 from pathlib import Path
 
 app = FastAPI(title="Loan Approval API")
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-MODEL_PATH = Path("app/model/loan_pipeline.joblib")
+MODEL_PATH = Path("app/model/loan_pipeline_CatBoost.joblib")
 if not MODEL_PATH.exists():
     raise RuntimeError(f"Model not found at {MODEL_PATH}")
 pipeline = joblib.load(MODEL_PATH)
@@ -24,31 +25,30 @@ async def home(request: Request):
     return FileResponse("static/index.html")
 
 @app.post("/predict")
-def predict_loan(input_data: LoanRequest):
+def predict(data: LoanRequest):
     try:
-        # Convert input to DataFrame (CRITICAL!)
-        input_df = pd.DataFrame([input_data.dict()])
-
-        # Ensure column order matches training (optional but safe)
-        expected_columns = [
+        df = pd.DataFrame([data.dict()])
+        df = df[[
             "Gender", "Married", "Dependents", "Education", "Self_Employed",
             "ApplicantIncome", "CoapplicantIncome", "LoanAmount",
             "Loan_Amount_Term", "Credit_History", "Property_Area"
-        ]
-        input_df = input_df[expected_columns]
+        ]]
 
-        # Predicting
-        prediction = pipeline.predict(input_df)
-        probability = pipeline.predict_proba(input_df)[0].tolist()
-        confidence = probability[list(pipeline.classes_).index(prediction)]
 
-        # pred_idx = list(pipeline.classes_).index(prediction)
-        # confidence = probability[pred_idx]
+        cat_cols = ["Gender", "Married", "Dependents", "Education", "Self_Employed", "Property_Area"]
+        for col in cat_cols:
+            df[col] = df[col].fillna("Missing").astype(str)
+        df["Credit_History"] = df["Credit_History"].fillna(-1).astype(str)
+
+        pred = pipeline.predict(df)[0]
+
+        pred = str(pred)
+        proba = pipeline.predict_proba(df)[0]
 
         return {
-            "Loan_Status": "Approved" if prediction[0] == "Y" else "Rejected",
-            "Confidence": round(confidence * 100, 2)
+            "Loan_Status": "Approved" if pred == "Y" else "Rejected",
+            "Confidence": round(float(proba.max()) * 100, 2)
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        return {"error": str(e)}
